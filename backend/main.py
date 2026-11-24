@@ -17,23 +17,26 @@ load_dotenv(ROOT / '.env')
 app = FastAPI(title='RideOps Intelligence API', version='1.0.0')
 
 # CORS configuration for local development and Vercel deployment
-frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
-
 allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://ride-ops-intelligence.vercel.app"
+    "https://ride-ops-intelligence.vercel.app",
 ]
 
-if frontend_url and frontend_url not in allowed_origins:
-    allowed_origins.append(frontend_url)
+# FRONTEND_URL may hold one URL or several comma-separated URLs
+for _u in os.getenv("FRONTEND_URL", "").split(","):
+    _u = _u.strip().rstrip("/")
+    if _u and _u not in allowed_origins:
+        allowed_origins.append(_u)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    # Lets Vercel preview deployments of this project call the API too
+    allow_origin_regex=r"https://ride-ops-intelligence-[a-z0-9-]+\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 TIME_COLS=['created_at','first_response_at','first_closed_at','final_closed_at']
