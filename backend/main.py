@@ -7,12 +7,34 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from openai import APIStatusError, APIConnectionError, APITimeoutError
 
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data' / 'rideops_support_tickets.csv'
 DB = ROOT / 'data' / 'rideops.db'
+
 load_dotenv(ROOT / '.env')
+
 app = FastAPI(title='RideOps Intelligence API', version='1.0.0')
-app.add_middleware(CORSMiddleware, allow_origins=['http://localhost:5173','http://127.0.0.1:5173'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
+
+# CORS configuration for local development and Vercel deployment
+frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
+
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ride-ops-intelligence.vercel.app"
+]
+
+if frontend_url and frontend_url not in allowed_origins:
+    allowed_origins.append(frontend_url)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 TIME_COLS=['created_at','first_response_at','first_closed_at','final_closed_at']
 def load_data():
