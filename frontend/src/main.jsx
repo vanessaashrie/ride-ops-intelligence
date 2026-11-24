@@ -3,7 +3,8 @@ import{createRoot}from'react-dom/client';
 import{AreaChart,Area,BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from'recharts';
 import{Activity,AlertCircle,ArrowUpRight,BarChart3,BookOpen,CheckCircle2,ChevronDown,ClipboardList,Clock3,Download,FileText,Filter,LayoutDashboard,LifeBuoy,MessageSquareText,Search,Send,ShieldCheck,Sparkles,Ticket,Users,Workflow,X}from'lucide-react';
 import ReactMarkdown from'react-markdown';import './style.css';
-const API='http://localhost:8000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 async function get(path){let r=await fetch(API+path);if(!r.ok)throw new Error(await r.text());return r.json()}
 async function post(path,body){let r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(await r.text());return r.json()}
 function App(){const[page,setPage]=useState('overview'),[overview,setOverview]=useState(null),[trends,setTrends]=useState([]),[cats,setCats]=useState([]),[tickets,setTickets]=useState([]),[selected,setSelected]=useState(null),[detail,setDetail]=useState(null),[playbooks,setPlaybooks]=useState({}),[query,setQuery]=useState(''),[category,setCategory]=useState(''),[status,setStatus]=useState(''),[loading,setLoading]=useState(true),[error,setError]=useState(''),[analysis,setAnalysis]=useState(null),[checks,setChecks]=useState([]),[notes,setNotes]=useState(''),[handoff,setHandoff]=useState(''),[copied,setCopied]=useState(false);
